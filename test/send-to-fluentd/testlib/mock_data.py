@@ -149,6 +149,7 @@ def mock_logging_data_20002(ts, concurrency):
         'queryid': "%x" % random.randint(0, 100000),
         'origin': random.choice(QNAMES),
         'status': random.choice(['OK', 'FAILED']),
+        "user-agent": user_agent,
         
         "stdout": "OK"
     }
@@ -188,3 +189,57 @@ def mock_logging_data_20002(ts, concurrency):
     jdata = dict(jdata.items() + jd.items())
     return json.dumps(jdata)
     
+def mock_logging_data_20003(ts, concurrency):
+    jdata = {
+        "staged_sig_names": random.choice(["", "XSS script tag end (Headers),XSS script tag (Headers)"]),
+        "virus_name": random.choice(["N/A", "resident", "multipartite", "Directory", "Direct Action", "Macro", "FAT", "Network"]),
+        "protocol": random.choice(['FTP', 'SMPTP', 'HTTP', 'DNS']),
+        "sig_ids": "200001475,200000098,200001088",
+        "sig_names": "XSS script tag end (Parameter) (2),XSS script tag (Parameter),alert() (Parameter)",
+        "response": "Response logging disabled",
+        "dest_port": "80",
+        "sub_violations": "",
+        "ip_with_route_domain": "10.250.64.100%0",
+        "dest_ip": "10.250.17.%d" % random.choice([22, 104, 89]),
+        "captcha_result": "not_received",
+        "login_result": "N/A",
+        "geo_location": "N/A",
+        "username": "N/A",
+        "mobile_application_version": "",
+        "management_ip_address": "10.250.18.126",
+        "mobile_application_name": "",
+        "sig_set_names": "{Generic Detection Signatures},{Generic Detection Signatures},{Generic Detection Signatures}",
+        "device_id": "N/A",
+        "ip_addrewss_intelligence": "N/A",
+        "request": "GET /DVWA/vulnerabilities/xss_r/?name=%3Cscript%3Ealert%28%22Your+system+is+infected%21+Call+999-888-7777+for+help.%22%29%3C%2Fscript%3E HTTP/1.1\\r\\nHost: 10.250.17.104\\r\\nConnection: keep-alive\\r\\nUpgrade-Insecure-Requests: 1\\r\\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\\r\\nReferer: http://10.250.17.104/DVWA/vulnerabilities/xss_r/\\r\\nAccept-Encoding: gzip, deflate\\r\\nAccept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7\\r\\nCookie: security=low; PHPSESSID=l2h24don29mpl1650mp34hpbr3; TS01bd0d10=01428d52e7fe28902c791e7744e626939ac72a344fbc80b15aeba18eb65101c4107c48511e53b053e55cf61eb89752da9ecdd5019253cf128c8d0c0fc0955e5499ef16d454e62bc155dc062404d781c648dad1a041ddf57b6bfff4ac88d199cf2b415dcb1887be33e1c27c4baed0a9468992f943ad\\r\\n\\r\\n",
+        "x_forwarded_for_header_value": "N/A",
+        "route_domain": "0",
+        "unit_hostname": "597200ed-322f-4001-baa2-55ab3c88942a.f5bigip.local",
+        "blocking_exception_reason": "<131>Jul 16 03:41:32 597200ed-322f-4001-baa2-55ab3c88942a.f5bigip.local ASM:\"N/A\"",
+        "policy_name": "/Common/DVWA-test",
+        "type": "kafka",
+        "staged_sig_set_names": "",
+        "websocket_direction": "N/A",
+        "websocket_message_type": "N/A",
+        "policy_apply_date": "2020-07-15 09:45:09",
+        "session_id": "9b5586855b961482",
+        "method": "GET",
+        "violations": "Attack signature detected",
+        "http_class_name": "/Common/DVWA-test",
+        "violation_rating": random.choice(['0', '0', '0', '0', '0', '0', '0', '1', '2', '3', '3', '4', '4', '4']),
+        "uri": random.choice(["/DVWA/vulnerabilities/xss_r/", ]),
+        "severity": random.choice(['Error', 'Warn', 'Debug']),
+        "client_type": "Uncategorized",
+        "attack_type": random.choice(["Cross Site Scripting (XSS)", "SQL-Injection", "CSRF"]),
+        "ip_client": "10.250.64.%d" % random.randint(2, 255),
+        "query_string": "name=%3Cscript%3Ealert%28%22Your+system+is+infected%21+Call+999-888-7777+for+help.%22%29%3C%2Fscript%3E",
+        "staged_sig_ids": "",
+        "suppoet_id": "2833372796841625208",
+        "is_truncated": "",
+        "date_time": "2020-07-16 03:41:32",
+        "src_port": "54901",
+        "request_status": random.choice(["blocked", "alarmed"]),
+        "response_code": random.choice(["0", "200"])
+    }
+
+    return jdata

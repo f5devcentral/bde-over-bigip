@@ -17,14 +17,14 @@ ndays = int(sys.argv[1])
 maxps = int(sys.argv[2])
 
 def connect():
-    testlib.send_logs.udp_connect('fluentd', 20001)
+    testlib.send_logs.tcp_connect('fluentd', 20001)
 
 def logging_at(ts, count):
 
     for n in range(0, count):
         cmd = "testlib.mock_data.mock_logging_data_%d(%d, %d)" % (20001, ts, count)
         d = eval(cmd)
-        testlib.send_logs.send_udp(d)
+        testlib.send_logs.send_tcp(d)
 
     time.sleep(0.001)
 connect()
@@ -37,5 +37,5 @@ for n in range(nstart, nend):
     if (n - nstart)* 100 % (nend - nstart) == 0:
         print("finished: %d, %d" % (int((n - nstart)* 100 / (nend - nstart)), count))
 
-testlib.send_logs.udp_socket.close()
+testlib.send_logs.tcp_socket.close()
 

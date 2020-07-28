@@ -19,14 +19,14 @@ start = sys.argv[2]
 end = sys.argv[3]
 
 def connect():
-    testlib.send_logs.udp_connect('fluentd', port)
+    testlib.send_logs.tcp_connect('fluentd', port)
 
 def logging_at(ts, count):
 
     for n in range(0, count):
         cmd = "testlib.mock_data.mock_logging_data_%s(%d, %d)" % (port, ts, count)
         d = eval(cmd)
-        testlib.send_logs.send_udp(d)
+        testlib.send_logs.send_tcp(d)
 
         # time.sleep(0.01)
 
@@ -39,5 +39,5 @@ for n in range(nstart, nend):
         print("finished: %d, %d" % (int((n - nstart)* 100 / (nend - nstart)), count))
     logging_at(n,count)
 
-testlib.send_logs.udp_socket.close()
+testlib.send_logs.tcp_socket.close()
 
