@@ -2,7 +2,7 @@ version: "3"
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
     container_name: ELASTICSEARCH
     ports:
       - 9200:9200
@@ -38,7 +38,7 @@ services:
       - ta-net
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.4.1
+    image: docker.elastic.co/kibana/kibana:7.8.0
     container_name: KIBANA
     links:
       - elasticsearch
