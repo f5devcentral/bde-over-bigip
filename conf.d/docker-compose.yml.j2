@@ -2,21 +2,21 @@ version: "3"
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    image: elasticsearch:7.14.2
     container_name: ELASTICSEARCH
     ports:
       - 9200:9200
     environment:
       - discovery.type=single-node
     volumes:
-      - ${HOMEDIR}/deps/conf.d/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options
+      - ${HOMEDIR}/deps/conf.d/elasticsearch/jvm.options.d:/usr/share/elasticsearch/config/jvm.options.d
       - ${HOMEDIR}/deps/conf.d/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ${HOMEDIR}/data/elasticsearch:/usr/share/elasticsearch/data
     networks:
       - ta-net
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.8.0
+    image: kibana:7.14.2
     container_name: KIBANA
     links:
       - elasticsearch
@@ -31,7 +31,7 @@ services:
       - ta-net
 
   logstash:
-    image: logstash:7.5.1
+    image: logstash:7.14.2
     container_name: LOGSTASH
     links:
       - elasticsearch

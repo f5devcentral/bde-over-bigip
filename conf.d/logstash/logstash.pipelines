@@ -6,8 +6,8 @@
   path.config: "/usr/share/logstash/config/pipelines/general"
   # pipeline.workers: 8 # default is cpu number
 
-- pipeline.id: json
-  path.config: "/usr/share/logstash/config/pipelines/json"
+# - pipeline.id: json
+#   path.config: "/usr/share/logstash/config/pipelines/json"
 
-- pipeline.id: regex
-  path.config: "/usr/share/logstash/config/pipelines/regex"
+# - pipeline.id: regex
+#   path.config: "/usr/share/logstash/config/pipelines/regex"

@@ -15,6 +15,7 @@ input {
     http {
         port => {{ logstash.inputs.http.port }}
         ssl => false
+        ecs_compatibility => "disabled"
     }
     {%- endif %}
 
@@ -55,6 +56,15 @@ filter {
             "@version"
         ]
     }
+    {% if 'http' in logstash.inputs.keys() -%}
+    mutate {
+        remove_field => [
+            "headers",
+            "host"
+        ]
+    }
+    {%- endif %}
+
 }
 
 output{
