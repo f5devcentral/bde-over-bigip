@@ -5,9 +5,9 @@
         "min_age": "0ms",
         "actions": {
           "rollover": {
-            "max_size": "50gb",
-            "max_age": "30d",
-            "max_docs": 10000
+            "max_size": "{{ logstash.rollover.max_size }}",
+            "max_age": "{{ logstash.rollover.max_age }}",
+            "max_docs": {{ logstash.rollover.max_docs }}
           },
           "set_priority": {
             "priority": 100
@@ -15,7 +15,7 @@
         }
       },
       "delete": {
-        "min_age": "90d",
+        "min_age": "{{ logstash.rollover.delete_min_age }}",
         "actions": {
           "delete": {}
         }

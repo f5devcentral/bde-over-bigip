@@ -1,0 +1,11 @@
+logstash:
+  inputs:
+    http:
+      port: 20004
+      ecs_compatibility: v1
+    kafka:
+  rollover:
+    max_size: 50mb
+    max_age: 3d
+    max_docs: 10000
+    delete_min_age: 5d

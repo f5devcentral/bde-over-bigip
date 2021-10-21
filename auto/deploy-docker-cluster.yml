@@ -1,0 +1,38 @@
+---
+
+- hosts: hostnames
+  gather_facts: False
+  remote_user: root
+  tasks:
+    - block:
+
+      - name: copy conf.d to deps
+        copy:
+          src: ../conf.d
+          dest: ../deps
+          force: yes
+
+      - name: find all .j2 files
+        find:
+          paths: ../deps
+          recurse: yes
+          patterns: "*.j2"
+        register: j2files_output
+
+      - block:
+        - name: generate configurations from .j2
+          template:
+            src: "{{ item }}"
+            dest: "{{ item[0:-3] }}"
+            force: yes
+          with_items: "{{ j2files }}"
+        
+        - name: delete .j2 file
+          file:
+            path: "{{ item }}"
+            state: absent
+          with_items: "{{ j2files }}"
+        vars: 
+          j2files: "{{ j2files_output.files | map(attribute='path') | list }}"
+
+      delegate_to: localhost

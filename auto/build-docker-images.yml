@@ -1,0 +1,13 @@
+---
+
+- hosts: hostnames
+  gather_facts: False
+  remote_user: root
+  tasks:
+    - name: rebuild docker images
+      shell: |
+        docker build -t {{ item }}:latest ../docker/{{ item }}
+      with_items:
+        - ctrlbox
+        - fluentd
+      delegate_to: localhost
