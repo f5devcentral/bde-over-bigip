@@ -8,3 +8,7 @@ logstash:
     max_age: 3d
     max_docs: 10000
     delete_min_age: 5d
+
+elasticsearch:
+
+kibana:
