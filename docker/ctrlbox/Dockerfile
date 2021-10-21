@@ -7,7 +7,7 @@ RUN yum update -y
 RUN yum install -y epel-release
 RUN yum update -y
 
-RUN yum install -y vim tree gcc curl jq crontabs goaccess net-tools
+RUN yum install -y vim tree gcc curl jq crontabs goaccess net-tools bind-utils
 
 RUN yum install -y python-pip
 RUN pip install eventlet requests

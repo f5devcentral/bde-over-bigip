@@ -2,19 +2,58 @@ version: "3"
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
+    image: elasticsearch:7.14.2
     container_name: ELASTICSEARCH
     ports:
       - 9200:9200
     environment:
       - discovery.type=single-node
     volumes:
-      - ${HOMEDIR}/conf.d/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options
-      - ${HOMEDIR}/conf.d/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ${HOMEDIR}/deps/conf.d/elasticsearch/jvm.options.d:/usr/share/elasticsearch/config/jvm.options.d
+      - ${HOMEDIR}/deps/conf.d/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ${HOMEDIR}/data/elasticsearch:/usr/share/elasticsearch/data
     networks:
       - ta-net
 
+  kibana:
+    image: kibana:7.14.2
+    container_name: KIBANA
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    volumes:
+      - ${HOMEDIR}/deps/conf.d/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ${HOMEDIR}/data/kibana:/usr/share/kibana/data
+    networks:
+      - ta-net
+
+  logstash:
+    image: logstash:7.14.2
+    container_name: LOGSTASH
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    ports:
+      - 9600:9600
+      - 20004:20004
+    volumes:
+      - ${HOMEDIR}/deps/conf.d/logstash/index-templates:/usr/share/logstash/index-templates
+      - ${HOMEDIR}/deps/conf.d/logstash/index-lifecycle:/usr/share/logstash/index-lifecycle
+      - ${HOMEDIR}/deps/conf.d/logstash/logstash.pipelines:/usr/share/logstash/config/pipelines.yml
+      - ${HOMEDIR}/deps/conf.d/logstash/pipelines:/usr/share/logstash/config/pipelines
+      - ${HOMEDIR}/scripts/cmds-in-logstash:/usr/share/logstash/cmds-in-logstash
+    entrypoint:
+      - bash
+      - -c
+      - "/usr/share/logstash/cmds-in-logstash/create-index-lifecycle.sh && /usr/local/bin/docker-entrypoint -r"
+    networks:
+      - ta-net
+
+  {% if mode == "full" -%}
   fluentd:
     build: ${HOMEDIR}/docker/fluentd
     image: f5networks/fluentd:latest
@@ -23,8 +62,8 @@ services:
       - "20000-20010:20000-20010"
       - 20002:20002/udp
     volumes:
-      - ${HOMEDIR}/conf.d/fluentd.conf:/etc/td-agent/td-agent.conf
-      - ${HOMEDIR}/conf.d/fluentd:/etc/td-agent/fluentd
+      - ${HOMEDIR}/deps/conf.d/fluentd.conf:/etc/td-agent/td-agent.conf
+      - ${HOMEDIR}/deps/conf.d/fluentd:/etc/td-agent/fluentd
       - ${HOMEDIR}/logs/fluentd/td-agent:/var/log/td-agent
       - ${HOMEDIR}/data/fluentd:/var/log/buffer
     links:
@@ -34,21 +73,6 @@ services:
       - kibana
       - kafka
       - logstash
-    networks:
-      - ta-net
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.4.1
-    container_name: KIBANA
-    links:
-      - elasticsearch
-    depends_on:
-      - elasticsearch
-    ports:
-      - 5601:5601
-    volumes:
-      - ${HOMEDIR}/conf.d/kibana.yml:/usr/share/kibana/config/kibana.yml
-      - ${HOMEDIR}/data/kibana:/usr/share/kibana/data
     networks:
       - ta-net
 
@@ -108,30 +132,7 @@ services:
       - zookeeper
     networks:
       - ta-net
-
-  logstash:
-    image: logstash:7.5.1
-    container_name: LOGSTASH
-    links:
-      - elasticsearch
-    depends_on:
-      - elasticsearch
-    ports:
-      - 9600:9600
-    volumes:
-      - ${HOMEDIR}/conf.d/logstash/index-templates:/usr/share/logstash/index-templates
-      - ${HOMEDIR}/conf.d/logstash/index-lifecycle:/usr/share/logstash/index-lifecycle
-      - ${HOMEDIR}/conf.d/logstash/logstash.pipelines:/usr/share/logstash/config/pipelines.yml
-      - ${HOMEDIR}/conf.d/logstash/pipelines:/usr/share/logstash/config/pipelines
-      - ${HOMEDIR}/scripts/cmds-in-logstash:/usr/share/logstash/cmds-in-logstash
-    entrypoint:
-      - bash
-      - -c
-      - "/usr/share/logstash/cmds-in-logstash/create-index-lifecycle.sh && /usr/local/bin/docker-entrypoint -r"
-    networks:
-      - ta-net
-    
-    
+          
   nginx:
     image: nginx:latest
     container_name: NGINX
@@ -139,13 +140,15 @@ services:
       - 20000:20000/udp
       - 80:80
     volumes:
-      - ${HOMEDIR}/conf.d/nginx.conf:/etc/nginx/nginx.conf
-      - ${HOMEDIR}/conf.d/nginx-dashboards:/etc/nginx/dashboards
+      - ${HOMEDIR}/deps/conf.d/nginx.conf:/etc/nginx/nginx.conf
+      - ${HOMEDIR}/deps/conf.d/nginx-dashboards:/etc/nginx/dashboards
       - ${HOMEDIR}/logs/nginx:/var/log/nginx
     depends_on:
       - fluentd
     networks:
       - ta-net
+
+  {%- endif %}
 
 networks:
   ta-net:

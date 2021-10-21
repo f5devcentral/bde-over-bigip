@@ -1,4 +1,6 @@
 input {
+
+    {% if 'kafka' in logstash.inputs.keys() and mode == 'full' -%}
     kafka {
         type => "kafka"
         bootstrap_servers => "kafka:9093"
@@ -7,22 +9,21 @@ input {
         ]
         decorate_events => "true"
     }
+    {%- endif %}
+
+    {% if 'http' in logstash.inputs.keys() -%}
+    http {
+        port => {{ logstash.inputs.http.port }}
+        ssl => false
+        ecs_compatibility => "disabled"
+    }
+    {%- endif %}
+
 }
 
 filter {
     json {
         source => "message"
-    }
-}
-
-filter {
-    # []用来访问 json 中的字段
-    if ("" in [mesg_hex]) {
-        if [mesg_hex] !~ /0$/ { # 1/16
-        # if [mesg_hex] !~ /[0-7]$/ { # half
-        # if [mesg_hex] !~ /[0-9a-z]$/ { # all
-            drop {}
-        }
     }
 }
 
@@ -55,30 +56,28 @@ filter {
             "@version"
         ]
     }
-    # Add timestamp to be @timestamp if data doesn't contain that.
-    # It's almostly useful for pure json data, and always useful for debugging.
-    if ![timestamp] {
-        mutate {
-            add_field => {
-                timestamp => "%{[@timestamp]}"
-            }
-        }
+    {% if 'http' in logstash.inputs.keys() -%}
+    mutate {
+        remove_field => [
+            "headers",
+            "host"
+        ]
     }
+    {%- endif %}
+
 }
 
 output{
     if [stdout] == 'OK' {
         stdout { codec => rubydebug }
     }
-    if [type] == "kafka" {
-        elasticsearch { 
-            hosts => ["elasticsearch:9200"]
-            ilm_rollover_alias => "general"
-            ilm_pattern => "000001"
-            ilm_policy => "general-ilm"
-            template => "/usr/share/logstash/index-templates/general-template.tmpl"
-            template_name => "general-template"
-        }
+    elasticsearch { 
+        hosts => ["elasticsearch:9200"]
+        ilm_rollover_alias => "general"
+        ilm_pattern => "000001"
+        ilm_policy => "general-ilm"
+        template => "/usr/share/logstash/index-templates/general-template.tmpl"
+        template_name => "general-template"
     }
 }
 
