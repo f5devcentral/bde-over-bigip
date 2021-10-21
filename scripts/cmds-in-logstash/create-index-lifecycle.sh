@@ -6,6 +6,7 @@ index_lifecyle_home=/usr/share/logstash/index-lifecycle
 
 timeout=150
 
+echo "Waiting for es to be ready"
 echo -n "Waiting for es to be ready ..."
 wait=0
 while true; do 
