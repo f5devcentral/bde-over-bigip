@@ -8,6 +8,14 @@ logstash:
     max_age: 3d
     max_docs: 10000
     delete_min_age: 5d
+  mappings:
+    # key_name_1: integer
+    # key_name_2: string
+    # key_name_3: double
+    # key_name_4: float
+    # key_name_5: object
+    # key_name_6: array
+    # key_name_7: true or false
 
 elasticsearch:
 
