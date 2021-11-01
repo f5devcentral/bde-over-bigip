@@ -13,10 +13,17 @@
   },
   "mappings": {
     "date_detection": false,
+    "numeric_detection": true,
     "properties": {
       "@timestamp": {
         "type": "date"
       }
+      {% if logstash.mappings and (logstash.mappings|length) > 0 %},
+        {% for key, value in logstash.mappings.items() %}
+          "{{key}}": {"type": "{{value}}"}
+          {{ ',' if not loop.last }}
+        {% endfor %}
+      {% endif %}
     }
   }
 }
