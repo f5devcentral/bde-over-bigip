@@ -41,9 +41,7 @@ a. Configuration Parameters:
    
    `hostnames`:
 
-   * use `localhost` if you want to deploy container set to local. (most used case).
-
-   * use specific IP for remote deployment.
+   * use any connectable IP. The deployment happens only to localhost. You may also set it to be `localhost` if your ssh is enabled on localhost.
    
    `mode`: 
 
