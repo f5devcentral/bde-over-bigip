@@ -14,6 +14,7 @@ It is powered by docker based BigData Engine Tools: EFK. The scaling-out is an a
 
 * docker
 * docker-compose
+* ansible env
 
 
 **Note:** 
@@ -34,8 +35,34 @@ It is powered by docker based BigData Engine Tools: EFK. The scaling-out is an a
 
 ## Usage and Workflow
 
-1. Run `start-all.sh`:
-   For the first time of running `start-all.sh`, docker command will pull or build images, so it may take a few minutes to finish, depends on the downloading speed of docker images.
+### 0. Configure conf.d/env.ini and generate real configuration.
+
+a. Configuration Parameters:
+   
+   `hostnames`:
+
+   * use `localhost` if you want to deploy container set to local. (most used case).
+
+   * use specific IP for remote deployment.
+   
+   `mode`: 
+
+   * **full**: the full mode will pull up all containers including customized UI based on NGINX, controller node for configuring predefined customized resources.
+     Note that, use the following line to generate docker images: fluentd ctrlbox.
+      
+         ansible-playbook -i conf.d/env.ini -e@conf.d/configs.yml auto/build-docker-images.yml
+   
+   * **concise**: basic ELK containers are pulled up with some initial configuration, such as opening port 20004 for accepting logs via http-post.
+
+b. Generate Cluster Configuration
+
+   Use the following line to generate cluster configuration.
+   
+      ansible-playbook -i conf.d/env.ini -e@conf.d/configs.yml auto/generate-runtime-configs.yml
+
+### 1. Run `start-all.sh`:
+   
+For the first time of running `start-all.sh`, docker command will pull or build images, so it may take a few minutes to finish, depends on the downloading speed of docker images.
 
    The `start-all.sh` process do the following 3 things in sequence:
    
