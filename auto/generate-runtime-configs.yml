@@ -7,10 +7,9 @@
     - block:
 
       - name: copy conf.d to deps
-        copy:
-          src: ../conf.d
-          dest: ../deps
-          force: yes
+        shell: |
+          mkdir -p ../deps
+          cp -r ../conf.d ../deps/
 
       - name: find all .j2 files
         find:
@@ -19,6 +18,8 @@
           patterns: "*.j2"
         register: j2files_output
 
+      - debug: msg="{{ j2files_output.files | map(attribute='path') | list }}"
+
       - block:
         - name: generate configurations from .j2
           template:
@@ -26,13 +27,13 @@
             dest: "{{ item[0:-3] }}"
             force: yes
           with_items: "{{ j2files }}"
-        
+
         - name: delete .j2 file
           file:
             path: "{{ item }}"
             state: absent
           with_items: "{{ j2files }}"
-        vars: 
+        vars:
           j2files: "{{ j2files_output.files | map(attribute='path') | list }}"
 
       delegate_to: localhost
