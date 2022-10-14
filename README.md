@@ -68,7 +68,16 @@ For the first time of running `start-all.sh`, docker command will pull or build 
    1. Imports kibana dashboards to KIBANA.
    1. Creates indexs and mappings in ELASTICSEARCH.
 
-2. Setup BIG-IP request logging profile and HSL pool.
+Use curl to do canary test:
+
+`curl -X POST localhost:20004 '{"mydata": "123"}'`
+
+or with timestamp appointed:
+
+`curl -X POST http://10.250.11.185:20004 -d '{"@timestamp": "2022-10-14T09:17:00.000+0800"}'`
+
+
+### 2. Setup BIG-IP request logging profile and HSL pool.
 
    More details about Request Logging Profile configuration(or optional using iRules) on BIG-IP, see docs/BIG-IP_Configuration_for_BDE.docx.
    
@@ -84,7 +93,7 @@ For the first time of running `start-all.sh`, docker command will pull or build 
 
       On the request logging profile creation page, left all configuration as default except *Response Setting* -> *Template*: Use the content of `docs/bigip-settings/http.logging.profile`.
 
-3. Discover and View in Dashboard.
+### 3. Discover and View in Dashboard.
 
    Open EntryPage: http://\<hostname>:80, or
    
